@@ -1,0 +1,21 @@
+"0","tib_energy_CA_cleaned |>
+   filter(Sector = ""Total"") |>
+  filter(County %in% county_filter_norcal) |>
+    ggplot(aes(year, GWh, color = County)) +
+    geom_line(linewidth = 1.4) +
+  labs(
+    title = ""Norcal select County Electricity Consumption"",
+    subtitle = ""in GWh combined residential & commercial"",
+    x = """",
+    y = """"
+  ) +
+  scale_color_brewer(palette = ""Set2"") +
+  theme_classic() +
+  theme(plot.title = element_text(face = ""bold"")) +
+  theme(plot.subtitle = element_text(face = ""italic"")) +
+  theme(panel.background = element_rect(fill = ""grey97"")) +
+  theme(plot.background = element_rect(""grey97"")) +
+  theme(legend.background = element_rect(""grey99""))
+"
+"2","Error: object 'tib_energy_CA_cleaned' not found
+"

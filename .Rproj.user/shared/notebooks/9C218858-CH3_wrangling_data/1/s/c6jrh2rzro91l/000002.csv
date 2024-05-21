@@ -1,0 +1,33 @@
+"0","```r
+tib_energy_CA <- read_csv(\"ElectricityByCounty_all_counties.csv\")
+```"
+"1","Rows: 58 Columns: 36── Column specification ──────────────────────────────────────────────────────────────────────────
+Delimiter: \",\"
+chr  (2): County, Sector
+dbl (34): 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009, ...
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","```r
+tib_energy_CA_cleaned <- tib_energy_CA |>
+  mutate(
+    Sector = NULL,
+    'Total Usage' = NULL
+  ) |>
+  pivot_longer(
+    cols = c(\"1990\":\"2022\"),
+    names_to = \"year\",
+    values_to = \"GWh\"
+  )|>
+  transform(year = as.numeric(year))
+
+summary(tib_energy_CA_cleaned)
+```"
+"1","    County               year           GWh          
+ Length:1914        Min.   :1990   Min.   :    9.62  
+ Class :character   1st Qu.:1998   1st Qu.:  380.87  
+ Mode  :character   Median :2006   Median : 1341.20  
+                    Mean   :2006   Mean   : 4555.13  
+                    3rd Qu.:2014   3rd Qu.: 4541.92  
+                    Max.   :2022   Max.   :72009.87  
+"

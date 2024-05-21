@@ -1,0 +1,34 @@
+"0","```r
+train_titanic_NA_drop_recode <- train_titanic_NA_drop |>
+  mutate(Sex = recode(Sex, \"male\" = 0, \"female\" = 1)) |>
+  mutate(Embarked = recode(
+    Embarked,
+    \"C\" = 0,
+    \"Q\" = 1,
+    \"S\" = 3
+  )) |>
+  mutate(Pclass = recode(
+    Pclass,
+    \"First\" = 1,
+    \"Second\" = 2,
+    \"Third\" = 3
+  )) |>
+  select(Survived,
+         Pclass,
+         Sex,
+         Age,
+         SibSp,
+         Parch,
+         Fare)
+
+train_titanic_NA_drop_recode = cor(train_titanic_NA_drop_recode)
+corrplot(
+  train_titanic_NA_drop_recode,
+  method = \"number\",
+  addrect = 2,
+  type = \"upper\",
+  cl.pos = 'n',
+  col = COL2('RdBu', 50),
+  bg = 'grey90'
+)
+```"

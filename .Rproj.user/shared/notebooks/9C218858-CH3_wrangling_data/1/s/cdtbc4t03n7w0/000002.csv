@@ -1,0 +1,12 @@
+"0","```r
+summary(tib_energy)
+
+```"
+"1","     Year                GWh       
+ Length:33          Min.   :62201  
+ Class :character   1st Qu.:65706  
+ Mode  :character   Median :68184  
+                    Mean   :67416  
+                    3rd Qu.:69404  
+                    Max.   :72010  
+"

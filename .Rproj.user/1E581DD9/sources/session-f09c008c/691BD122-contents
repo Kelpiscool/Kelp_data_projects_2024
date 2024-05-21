@@ -1,0 +1,208 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+
+
+```{r}
+library(tidyverse)
+
+tib <- read.csv("_ITU-Communication - Dataset - v6 - data-for-countries-etc-by-year.csv")
+tib
+```
+
+Read in CSV from, default directory is the active project location.
+
+```{r}
+country_filter = c(
+  "Norway",
+  "Germany",
+  "Canada",
+  "United States",
+  "Japan"
+)
+
+tib |>
+  filter(name %in% country_filter) ->
+  tib_filtered
+tib_filtered
+```
+
+Here we filter out of the worldwide list a select number of countries based on a vector.
+
+```{r}
+ggplot(tib_filtered, aes(time, Non.internet.users, color = name)) +
+  geom_line(linewidth = .8) +
+  labs(
+    title = "Proportion of non-internet users in select countries",
+    subtitle = "% non-internet users",
+    x = "",
+    y = "",
+    color = "Country"
+  ) +
+  theme_classic() +
+  theme(plot.title = element_text(face = "bold")) +
+  theme(panel.background = element_rect(fill = "grey97")) +
+  theme(plot.background = element_rect("grey97")) +
+  theme(legend.background = element_rect("grey99"))
+```
+```{r}
+tib_energy <- read_csv("LA_country_elec_usage.csv")
+tib_energy <- tib_energy |>
+  select(name, GWh)|>
+  rename(Year = name)
+
+ggplot(tib_energy, aes(Year, GWh, color = GWh)) +
+  geom_line(aes(group = 1), linewidth = 1.4) +
+  labs(
+    title = "Los Angeles County electricity consumption",
+    subtitle = "in GWh",
+    x = "",
+    y = ""
+  ) +
+  scale_x_discrete(
+    breaks = c(1990, 2000, 2010, 2020)
+  ) +
+  scale_color_continuous(type = "viridis") +
+  theme_classic() +
+  theme(plot.title = element_text(face = "bold")) +
+  theme(plot.subtitle = element_text(face = "italic")) +
+  theme(panel.background = element_rect(fill = "grey97")) +
+  theme(plot.background = element_rect("grey97")) +
+  theme(legend.background = element_rect("grey99"))
+```
+
+Here one country will be filtered out and the filtered data will be pivoted.
+```{r}
+summary(tib_energy)
+```
+```{r}
+tib_energy_CA <- read_csv("ElectricityByCounty_all_counties.csv")
+
+tib_energy_CA_cleaned <- tib_energy_CA |>
+  mutate(
+    Sector = NULL,
+    'Total Usage' = NULL
+  ) |>
+  pivot_longer(
+    cols = c("1990":"2022"),
+    names_to = "year",
+    values_to = "GWh"
+  )|>
+  transform(year = as.numeric(year))
+
+summary(tib_energy_CA_cleaned)
+
+```
+Data from ecdms.energy.ca.gov, collected all years and counties available by
+total electricity usage. No distinction between commercial and non-commercial
+use.
+
+When imported, extraneous columns are removed.
+
+```{r}
+ggplot(tib_energy_CA_cleaned, aes(year, GWh, color = County)) +
+  geom_line(show.legend = FALSE, linewidth = 1.4) +
+  labs(
+    title = "California Energy Consumption",
+    subtitle = "in GWh by County",
+    x = "",
+    y = ""
+  ) +
+  scale_x_discrete(
+    breaks = c(1990, 2000, 2010, 2020)
+  ) +
+  scale_color_ordinal() +
+  theme_classic() +
+  theme(plot.title = element_text(face = "bold")) +
+  theme(plot.subtitle = element_text(face = "italic")) +
+  theme(panel.background = element_rect(fill = "grey97")) +
+  theme(plot.background = element_rect("grey97")) +
+  theme(legend.background = element_rect("grey99"))
+  
+```
+```{r}
+tib_energy_CA_cleaned |>
+  group_by(County) |>
+  summarise(mean_GWh = mean(GWh)) |>
+  ggplot(aes(mean_GWh, County)) +
+  geom_point(show.legend = FALSE) +
+  scale_color_continuous(type = "viridis") +
+  theme_classic() +
+  theme(plot.title = element_text(face = "bold")) +
+  theme(plot.subtitle = element_text(face = "italic")) +
+  theme(panel.background = element_rect(fill = "grey97")) +
+  theme(plot.background = element_rect("grey97")) +
+  theme(legend.background = element_rect("grey99"))
+```
+```{r}
+county_filter_norcal <- c("SAN FRANCISCO", "SANTA CLARA", "ALAMEDA", "SAN MATEO")
+tib_energy_CA_cleaned |>
+  filter(County %in% county_filter_norcal) |>
+    ggplot(aes(year, GWh, color = County)) +
+    geom_line(linewidth = 1.4) +
+  labs(
+    title = "Norcal select County Electricity Consumption",
+    subtitle = "in GWh combined residential & commercial",
+    x = "",
+    y = ""
+  ) +
+  scale_color_brewer(palette = "Set2") +
+  theme_classic() +
+  theme(plot.title = element_text(face = "bold")) +
+  theme(plot.subtitle = element_text(face = "italic")) +
+  theme(panel.background = element_rect(fill = "grey97")) +
+  theme(plot.background = element_rect("grey97")) +
+  theme(legend.background = element_rect("grey99"))
+```
+```{r}
+county_filter_sorcal <- c("LOS ANGELES", "SAN BERNARDINO", "ORANGE", "VENTURA", "SAN DIEGO")
+tib_energy_CA_cleaned |>
+  filter(County %in% county_filter_sorcal) |>
+    ggplot(aes(year, GWh, color = County)) +
+    geom_line(linewidth = 1.4) +
+  labs(
+    title = "Socal select County Electricity Consumption",
+    subtitle = "in GWh combined residential & commercial.",
+    x = "",
+    y = ""
+  ) +
+  scale_color_brewer(palette = "Set2") +
+  theme_classic() +
+  theme(plot.title = element_text(face = "bold")) +
+  theme(plot.subtitle = element_text(face = "italic")) +
+  theme(panel.background = element_rect(fill = "grey97")) +
+  theme(plot.background = element_rect("grey97")) +
+  theme(legend.background = element_rect("grey99"))
+```
+Los Angeles county outline shows that energy use is largely dependent on population. Does Socal use more energy per capita than the north due to water infrastructure, the largest user of power in the south.
+
+```{r}
+CA_2020_pop <- read.csv("CA_country_pop_2020.csv")
+CA_2020_pop_cleaned <- CA_2020_pop |> 
+  mutate(
+    County = str_to_upper(County)
+  )
+
+CA_electricity_county_pivot_pop <- CA_electricity_county_pivot |>
+  filter(year == 2020) |>
+  filter(Sector == "Total") |>
+  full_join(CA_2020_pop_cleaned, by = "County") |>
+  mutate(
+    per_capita_use_MWh = (GWh / Population) * 1000
+  )
+
+ggplot(CA_electricity_county_pivot_pop, aes(per_capita_use_MWh, County)) +
+geom_point()
+```
+
+```{r}
+set.seed(1)
+runif(4)
+```
+
