@@ -1,6 +1,8 @@
 ---
 title: "A look at Electricity usage in California by county."
-output: html_notebook
+output:
+  pdf_document: default
+  html_notebook: default
 ---
 
 ### Data from California Energy Commission & Deparment of Finance
@@ -109,8 +111,8 @@ wrap_plots(p1 / p2) +
   plot_layout()
 
 ```
-### Looking at the Bay Area & Southern California
 
+### Looking at the Bay Area & Southern California
 |     Looking at electricity consumption in Northern California, Santa Clara is the largest user of electricity followed by Alameda county.  These are the two most populous county in Northern California so electricity consumption seems to be linked to the population.  Correspondingly San Francisco county with a small geographical size and population use a smaller amount of energy.  <br />
 
 |     Alameda and Santa Clara counties are comparable in in population to Riverside in southern California.  Interestingly even with climate changes and increased electricity usage to pump water to the south, Riverside county still uses a comparable amount of electricity to a similar sized county in the north. <br />
