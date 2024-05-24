@@ -1,11 +1,11 @@
 ---
-title: "A look at Electricity usage in California by county."
+title: "A look at electricity usage in California by county."
 output:
   pdf_document: default
   html_notebook: default
 ---
 
-### Data from California Energy Commission & Deparment of Finance
+### Data from California Energy Commission & Department of Finance
 
 ```{r}
 library(tidyverse)
@@ -14,7 +14,7 @@ library(maps)
 library(mapproj)
 
 CA_electricity_county <- read_csv("ElectricityByCounty.csv")
-CA_2020_pop <- read_csv("CA_country_pop_2020.csv")
+CA_2020_pop <- read_csv("CA_county_pop_2020.csv")
 
 CA_electricity_county_pivot <- CA_electricity_county |>
   mutate("Total Usage" = NULL) |>
@@ -29,11 +29,14 @@ number_of_counties = length(unique(CA_electricity_county_pivot$County))
 ```
 
 ### Importing data
-|     The CEC (California Energy Commission) makes available county level electricity usage in the state in .csv form. Each county is broken up by three yearly observations. Commercial and non-commercial usage of electricity are recorded separately, the last observation for every year is a summation of commercial and non-commercial use.  The CEC also provides a "total usage" by county variable which will be dropped for this analyses as it can be easily derived and can create data tidying issues down the line.<br />
-|     The Information provided by the CEC also needs to be pivoted as it records yearly sums in a horizontal fashion which does not work well with R. By pivoting the data a separate row can be created for each county by year and usage.  This makes the data easier for R to understand.  Lastly the year variable was not recognized as a double so specifying to R that it is a numeric value instead of a character is beneficial.<br />
+
+|     The CEC (California Energy Commission) makes available county level electricity usage in the state in .csv form. Each county is broken up by three yearly observations. Commercial and non-commercial usage of electricity are recorded separately, the last observation for every year is a summation of commercial and non-commercial use. The CEC also provides a "total usage" by county variable which will be dropped for this analyses as it can be easily derived and can create data tidying issues down the line.<br />
+|     The Information provided by the CEC also needs to be pivoted as it records yearly sums in a horizontal fashion which does not work well with R. By pivoting the data a separate row can be created for each county by year and usage. This makes the data easier for R to understand. Lastly the year variable was not recognized as a double so specifying to R that it is a numeric value instead of a character is beneficial.<br />
 |     After applying these transformations we get a list of every county by year and for each year there are now three observations which correspond to commercial, non-commercial and, total use. <br />
+
 ### Preliminary Findings
-|     The data set includes observations for 58 counties which is the number of counties in the state.  It also only records consumption data for the past 22 years.
+
+|     The data set includes observations for 58 counties which is the number of counties in the state. It also only records consumption data for the past 22 years.
 
 ```{r}
 if (require("maps")) {
@@ -113,11 +116,12 @@ wrap_plots(p1 / p2) +
 ```
 
 ### Looking at the Bay Area & Southern California
-|     Looking at electricity consumption in Northern California, Santa Clara is the largest user of electricity followed by Alameda county.  These are the two most populous county in Northern California so electricity consumption seems to be linked to the population.  Correspondingly San Francisco county with a small geographical size and population use a smaller amount of energy.  <br />
 
-|     Alameda and Santa Clara counties are comparable in in population to Riverside in southern California.  Interestingly even with climate changes and increased electricity usage to pump water to the south, Riverside county still uses a comparable amount of electricity to a similar sized county in the north. <br />
+|     Looking at electricity consumption in Northern California, Santa Clara is the largest user of electricity followed by Alameda county. These are the two most populous county in Northern California so electricity consumption seems to be linked to the population. Correspondingly San Francisco county with a small geographical size and population use a smaller amount of energy. <br />
 
-|     Of all the counties in the state, Los Angeles county is by bar and way the largest consumer of electricity.  It is also the most populous county in the state with nearly 9 million people. This is three times larger than the next largest county San Diego.  As a result Los Angeles uses over three times the amount of energy.  While this may seem alarming the per capita usage of electricity by county will be calculated for 2020 which will level out outliers like Los Angeles County.<br />
+|     Alameda and Santa Clara counties are comparable in in population to Riverside in southern California. Interestingly even with climate changes and increased electricity usage to pump water to the south, Riverside county still uses a comparable amount of electricity to a similar sized county in the north. <br />
+
+|     Of all the counties in the state, Los Angeles county is by bar and way the largest consumer of electricity. It is also the most populous county in the state with nearly 9 million people. This is three times larger than the next largest county San Diego. As a result Los Angeles uses over three times the amount of energy. While this may seem alarming the per capita usage of electricity by county will be calculated for 2020 which will level out outliers like Los Angeles County.<br />
 
 ```{r fig.width=7, fig.height=7.8}
 CA_2020_pop_cleaned <- CA_2020_pop |>
@@ -162,10 +166,21 @@ ggplot(CA_electricity_county_pivot_pop,
 ```
 
 ### Per capita electricity use in 2020
-|     To reduce the effects of outlier counties like Los Angeles instead of looking at energy consumption alone, it can be divided by the population of the county as seen earlier, population is a large determinant in a counties energy consumption.  Accounting for the effects of population would show more information about the states energy consumption. <br />
 
-|    The state of California Department of Finance provides population estimates for the state on a yearly basis, the data presented in E-2 gives an estimation for every counties population from  2010 to 2020.  For this analyses, energy consumption in the year 2020 will be combined with population data from the same year to create a per capita MWH consumption figure for each county.  The mean consumption across alll counties is highlighted as a gray vertical bar.. <br />
+|     To reduce the effects of outlier counties like Los Angeles instead of looking at energy consumption alone, it can be divided by the population of the county as seen earlier, population is a large determinant in a counties energy consumption. Accounting for the effects of population would show more information about the states energy consumption. <br />
 
-|    Graphing the per capita MWh consumption, outliers like Los Angeles disappear.  When accounting for the population size of Los Angeles, a person living in Los Angeles county uses slightly less than the state average per capita consumption.  This is a surprising finding as Los Angeles extensive network of aqueducts and reservoirs require vast amount of energy as much of the water in the region is imported.  However the energy consumption of the states large scale water infrastructure might be more equitably shared amongst all counties than previously anticipated.<br />
+|    The state of California Department of Finance provides population estimates for the state on a yearly basis, the data presented in E-2 gives an estimation for every counties population from 2010 to 2020. For this analyses, energy consumption in the year 2020 will be combined with population data from the same year to create a per capita MWH (Megawatt hour) consumption figure for each county. The mean consumption across all counties is highlighted as a gray vertical bar.. <br />
 
-|    Another finding of per capita consumption is the outsized consumption that many smaller counties in the north of the state have.  Modoc County only has a population of ~8700 people  and total electricity usage is the fifth lowest in the state however the per capita use shows that their is a higher energy intensity per person in Modoc. The second highest per capita user of electricity in the state is Kern County.  Kern is in the south and has a sizable population nearing 1 million in 2020.  More research will have to be done to figure out why per capita usage is so high relative to other counties around Kern.<br />
+|    Graphing the per capita MWh consumption, outliers like Los Angeles disappear. When accounting for the population size of Los Angeles, a person living in Los Angeles county uses slightly less than the state average per capita consumption. This is a surprising finding as Los Angeles extensive network of aqueducts and reservoirs require vast amount of energy as much of the water in the region is imported. However the energy consumption of the states large scale water infrastructure might be more equitably shared amongst all counties than previously anticipated.<br />
+
+|    Another finding of per capita consumption is the out sized consumption that many smaller counties in the north of the state have. Modoc County only has a population of \~8700 people and total electricity usage is the fifth lowest in the state however the per capita use shows that their is a higher energy intensity per person in Modoc. The second highest per capita user of electricity in the state is Kern County. Kern is in the south and has a sizable population nearing 1 million in 2020. More research will have to be done to figure out why per capita usage is so high relative to other counties around Kern.<br />
+
+### Data Sources:
+
+County Electricity Data 1990 - 2022:
+
+<http://www.ecdms.energy.ca.gov/elecbycounty.aspx>
+
+E-2 California County Population Estimates and Components of Change by Year:
+
+<https://dof.ca.gov/forecasting/demographics/e-2-california-county-population-estimates-and-components-of-change-by-year/>
